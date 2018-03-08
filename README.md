@@ -53,6 +53,38 @@ new RippledWsClient('wss://s1.ripple.com').then((Connection) => {
 
 This class rejects a `RippledWsClientSignError`-error. This error is identical to `Error`, but adds the `.details` property. In `.details` additional information about the Error is available (e.g. the response from the rippled-server).
 
+#### The following errors (...`.details.type`) exist:
+
+##### Connectivity / Account
+- `invalid_wsclient`
+- `subscribe_error`
+- `account_info_invalid`
+- `account_info_error`
+
+##### Seed / keypair
+- `seed_invalid`
+- `keypair_invalid_keys`
+- `keypair_invalid_hex`
+- `keypair_invalid`
+
+##### Transaction contents
+- `transaction_invalid`
+- `transaction_invalid_no_signed_object`
+- `invalid_transaction_json`
+- `invalid_transaction_type`
+- `invalid_transaction_jsonstring`
+
+##### Offline / Fee / Sequence requirements
+- `sequence_required_offline`
+- `fee_required_offline`
+- `sequence_not_a_number`
+
+##### Transaction Sign / Submit / Response 
+- `transaction_error`
+- `transaction_submit_error`
+- `transaction_submit_non_tes_or_queued`
+- `sign_error`
+
 # Security
 
 **This module will _ALWAYS_ sign locally / client-side.**
