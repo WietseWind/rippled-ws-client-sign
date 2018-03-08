@@ -1,0 +1,28 @@
+{
+  "name": "rippled-ws-client-sign",
+  "version": "0.0.1",
+  "description": "Sign transactions locally to submit with rippled-ws-client",
+  "dependencies": {
+    "ripple-binary-codec": "^0.1.13",
+    "ripple-hashes": "^0.3.1",
+    "ripple-keypairs": "^0.10.1"
+  },
+  "main": "src/index.js",
+  "files": [
+    "src"
+  ],
+  "devDependencies": {
+    "rippled-ws-client": "0.0.1",
+    "websocket": "^1.0.25"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/WietseWind/rippled-ws-client-sign.git"
+  },
+  "bugs": {
+    "url": "https://github.com/WietseWind/rippled-ws-client-sign/issues"
+  },
+  "homepage": "https://github.com/WietseWind/rippled-ws-client-sign#readme",
+  "license": "MIT",
+  "readmeFilename": "README.md"
+}
