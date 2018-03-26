@@ -178,6 +178,8 @@ class RippledWsClientSign {
                 type: 'keypair_invalid_hex',
                 message: 'Invalid keypair, .privateKey and/or .publicKey not hexadecimal'
               }))
+            } else {
+              Keypair = SeedOrKeypair
             }
           }
         }
