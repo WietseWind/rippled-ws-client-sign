@@ -49,6 +49,31 @@ new RippledWsClient('wss://s1.ripple.com').then((Connection) => {
 })
 ```
 
+## Note on using this with Vue Webpack
+
+When using this code in online mode, the source will check for a valid `RippledWsClient` object using:
+
+```
+RippledWsClient.constructor.name === 'RippledWsClient'
+```
+
+The default compress / mangle configuration of the UglifyJs plugin will break this. To prevent this, modify `build/webpack.prod.conf.js` and configure the `UglifyJsPlugin` with the `keep_fnames` and `keep_classnames` like this:
+
+```
+  uglifyOptions: {
+    compress: {
+      warnings: false,
+      keep_fnames: true,
+      keep_classnames: true
+    },
+    mangle: {
+      keep_fnames: true,
+      keep_classnames: true
+    }
+  },
+
+```
+
 ## Errors
 
 This class rejects a `RippledWsClientSignError`-error. This error is identical to `Error`, but adds the `.details` property. In `.details` additional information about the Error is available (e.g. the response from the rippled-server).
