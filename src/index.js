@@ -239,6 +239,9 @@ class RippledWsClientSign {
               if (typeof Transaction.Fee !== 'undefined') Transaction.Fee += ''
               if (typeof Transaction.Amount !== 'undefined' && typeof Transaction.Amount !== 'object') Transaction.Amount += ''
               if (typeof Transaction.Amount === 'object' && typeof Transaction.Amount.value !== 'undefined') Transaction.Amount.value += ''
+              if (typeof Transaction.Flags === 'undefined') Transaction.Flags = 2147483648
+              if (typeof Transaction.Flags === 'string') Transaction.Flags = parseInt(Transaction.Flags)
+              if (!isNaN(Transaction.Flags) && Transaction.Flags < 2147483648) Transaction.Flags += 2147483648
 
               if (typeof Transaction.Sequence === 'string') {
                 Transaction.Sequence = parseInt(Transaction.Sequence)
