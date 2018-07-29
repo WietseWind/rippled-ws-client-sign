@@ -1,6 +1,6 @@
 {
   "name": "rippled-ws-client-sign",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Sign transactions locally to submit with rippled-ws-client",
   "dependencies": {
     "ripple-binary-codec": "^0.1.13",
