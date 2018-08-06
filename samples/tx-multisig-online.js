@@ -79,8 +79,8 @@ const Transaction = {
  * retrieve the Sequence number.
  */
 
-new RippledWsClient('wss://s.altnet.rippletest.net:51233').then((Connection) => {
-  new RippledWsClientSign(Transaction, MultiSigKeypairs).then(TransactionSuccess => {
+new RippledWsClient('wss://s.altnet.rippletest.net:51233').then(Connection => {
+  new RippledWsClientSign(Transaction, MultiSigKeypairs, Connection).then(TransactionSuccess => {
     /**
      * We end up over here if the transaction is sent and found 
      * in a closed ledger. We know for sure the transaction

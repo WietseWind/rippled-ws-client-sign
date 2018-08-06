@@ -191,9 +191,9 @@ class RippledWsClientSign {
               account: ''
             }
             if (typeof keypair === 'string' && keypair.trim().match(/^s/)) {
-              Object.assign(completePair, { ...RippleKeypairs.deriveKeypair(keypair.trim()) }) 
+              Object.assign(completePair, RippleKeypairs.deriveKeypair(keypair.trim()))
             } else if (typeof keypair === 'object' && typeof keypair.familySeed !== 'undefined') {
-              Object.assign(completePair, { ...RippleKeypairs.deriveKeypair(keypair.familySeed.trim()) }) 
+              Object.assign(completePair, RippleKeypairs.deriveKeypair(keypair.familySeed.trim()))
             }
             if (completePair.privateKey === '' && typeof keypair.privateKey === 'string') completePair.privateKey = keypair.privateKey
             if (completePair.publicKey === '' && typeof keypair.publicKey === 'string') completePair.publicKey = keypair.publicKey
