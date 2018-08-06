@@ -25,7 +25,7 @@ To use this module in vanillajs, vue-webpack, nodejs, etc.: please check [the do
 const RippledWsClient = require('rippled-ws-client')
 const RippledWsClientSign = require('rippled-ws-client-sign')
 
-let Seed = 'sXXXXXXXXXXXXX' // (keypair supported as well)
+let Seed = 'sXXXXXXXXXXXXX' // (Keypair and MultiSig supported as well!)
 
 const Transaction = {
   TransactionType: 'Payment',
@@ -48,6 +48,36 @@ new RippledWsClient('wss://s1.ripple.com').then((Connection) => {
   console.log('ConnectionError', ConnectionError)
 })
 ```
+
+# Seed/Keypair/MultiSig
+
+In the sample (above) a family seed is entered (as the second `RippledWsClientSign ` argument). It is also possible to supply a keypair; eg.:
+
+```
+{
+  publicKey: "XXXX",
+  privateKey: "XXXX"
+}
+```
+
+This lib. supports [MultiSig](https://developers.ripple.com/set-up-multi-signing.html) (Multi-Signing) as well; you can sign a MultiSig transaction by providing an **array** with either multiple keypairs or multiple family seeds. They can be used in mixed mode. [Here's a sample](https://github.com/WietseWind/rippled-ws-client-sign/blob/master/samples/tx-multisig-online.js).
+
+If you want to set an alternate `signAs` value you can specify the `account` or `signAs` value in the objects in the array with the MultiSig keypairs/seeds. Sample:
+
+```
+let MultiSigKeypairs = [
+  'shwxKJsHuTct5EcqcLRAx7o7mPMxn',
+  {
+    privateKey: '00018FFAF1911AC7C1D52833D2DD20CC36AD727C37AB7298D652BA7A1F48786C63',
+    signAs: 'rsAW8cc8EXkmogYse6zz3Z9NU2QEep5q3p'
+  },
+  {
+    familySeed: 'ssPpqpaqWkq7F7yDnS5aY16S7Qu1V'
+  }
+]
+```
+
+When the fee is not specified in the transaction (causing the lib. to auto-detect the fee) the fee will be multiplied by the amount of signers as per the Ripple documentation.
 
 ## Note on using this with Vue Webpack
 

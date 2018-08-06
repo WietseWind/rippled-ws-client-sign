@@ -22,11 +22,27 @@ class RippledWsClientSign {
       let TxBlob
       let TxId
 
-      Transaction.SigningPubKey = Keypair.publicKey
-      Transaction.TxnSignature = RippleKeypairs.sign(RippleBinaryCodec.encodeForSigning(Transaction), Keypair.privateKey)
+      if (SeedOrKeypair instanceof Array) {
+        // Multisig
+        const RippleLibApi = require('ripple-lib').RippleAPI
+        const RippleApi = new RippleLibApi()
 
-      TxBlob = RippleBinaryCodec.encode(Transaction)
-      TxId = RippleHashes.computeBinaryTransactionHash(TxBlob)
+        let MultiSignedTransactionBinary = RippleApi.combine(SeedOrKeypair.map(pair => {
+          return RippleApi.sign(JSON.stringify(Transaction), { publicKey: pair.publicKey, privateKey: pair.privateKey }, { signAs: pair.account }).signedTransaction
+        }))
+
+        // let MultiSignedTransaction = RippleCodec.decode(MultiSignedTransactionBinary.signedTransaction)
+        // console.log(MultiSignedTransaction)        
+
+        TxBlob = MultiSignedTransactionBinary.signedTransaction
+        TxId = MultiSignedTransactionBinary.id
+      } else {
+        Transaction.SigningPubKey = Keypair.publicKey
+        Transaction.TxnSignature = RippleKeypairs.sign(RippleBinaryCodec.encodeForSigning(Transaction), Keypair.privateKey)
+
+        TxBlob = RippleBinaryCodec.encode(Transaction)
+        TxId = RippleHashes.computeBinaryTransactionHash(TxBlob)
+      }
 
       return {
         tx_blob: TxBlob,
@@ -166,7 +182,40 @@ class RippledWsClientSign {
 
         SendTransaction(Transaction)
       } else {
-        if (typeof SeedOrKeypair === 'object' && SeedOrKeypair) {
+        if (SeedOrKeypair instanceof Array) {
+          let MultiSigKeys = []
+          SeedOrKeypair.forEach(keypair => {
+            let completePair = {
+              publicKey: '',
+              privateKey: '',
+              account: ''
+            }
+            if (typeof keypair === 'string' && keypair.trim().match(/^s/)) {
+              Object.assign(completePair, { ...RippleKeypairs.deriveKeypair(keypair.trim()) }) 
+            } else if (typeof keypair === 'object' && typeof keypair.familySeed !== 'undefined') {
+              Object.assign(completePair, { ...RippleKeypairs.deriveKeypair(keypair.familySeed.trim()) }) 
+            }
+            if (completePair.privateKey === '' && typeof keypair.privateKey === 'string') completePair.privateKey = keypair.privateKey
+            if (completePair.publicKey === '' && typeof keypair.publicKey === 'string') completePair.publicKey = keypair.publicKey
+            if (completePair.account === '' && typeof keypair.account === 'string') completePair.account = keypair.account
+            if (completePair.account === '' && typeof keypair.signAs === 'string') completePair.account = keypair.signAs
+            if (completePair.privateKey !== '' && completePair.publicKey === '') {
+              completePair.publicKey = ((a) => {
+                return a.map(function(byteValue) {
+                  const hex = byteValue.toString(16).toUpperCase()
+                  return hex.length > 1 ? hex : '0' + hex
+                }).join('')
+              })(require('elliptic').ec('secp256k1').keyFromPrivate(completePair.privateKey.slice(2)).getPublic().encodeCompressed())
+            }
+
+            if (completePair.account === '') {
+              completePair.account = RippleKeypairs.deriveAddress(completePair.publicKey)
+            }
+
+            MultiSigKeys.push(completePair)
+          })
+          SeedOrKeypair = MultiSigKeys
+        } else if (typeof SeedOrKeypair === 'object' && SeedOrKeypair) {
           if (typeof SeedOrKeypair.privateKey === 'undefined' || typeof SeedOrKeypair.publicKey === 'undefined') {
             reject(new RippledWsClientSignError('Invalid keypair, .privateKey and/or .publicKey properties missing', {
               type: 'keypair_invalid_keys',
@@ -185,7 +234,7 @@ class RippledWsClientSign {
         }
 
         // TX Json
-        if (typeof Keypair === 'undefined') {
+        if (typeof Keypair === 'undefined' && !(SeedOrKeypair instanceof Array)) {
           reject(new RippledWsClientSignError('Invalid keypair, no valid seed / secret / keypair entered', {
             type: 'keypair_invalid',
             message: 'Invalid keypair, no valid seed / secret / keypair entered'
@@ -267,7 +316,11 @@ class RippledWsClientSign {
               } else {
                 const SignAndSubmit = () => {
                   if (typeof Transaction.Fee === 'undefined') {
-                    Transaction.Fee = RippledWsClient.getState().fee.avg + ''
+                    let multiSignFactor = 1
+                    if (SeedOrKeypair instanceof Array) {
+                      multiSignFactor += SeedOrKeypair.length
+                    }
+                    Transaction.Fee = RippledWsClient.getState().fee.avg * multiSignFactor + ''
                   }
                   if (typeof Transaction.LastLedgerSequence !== 'undefined' && Transaction.LastLedgerSequence === null) {
                     Transaction.LastLedgerSequence = RippledWsClient.getState().ledger.last + 5
