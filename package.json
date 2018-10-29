@@ -3,11 +3,11 @@
   "version": "0.1.4",
   "description": "Sign transactions locally to submit with rippled-ws-client",
   "dependencies": {
-    "elliptic": "^6.4.0",
-    "ripple-binary-codec": "^0.1.13",
+    "elliptic": "^6.4.1",
+    "ripple-binary-codec": "^0.1.15",
     "ripple-hashes": "^0.3.1",
-    "ripple-keypairs": "^0.10.1",
-    "ripple-lib": "^1.0.0-beta.3"
+    "ripple-keypairs": "^0.10.2",
+    "ripple-lib": "^1.0.2"
   },
   "main": "src/index.js",
   "files": [
@@ -15,7 +15,7 @@
   ],
   "devDependencies": {
     "rippled-ws-client": "0.0.1",
-    "websocket": "^1.0.25"
+    "websocket": "^1.0.28"
   },
   "repository": {
     "type": "git",
