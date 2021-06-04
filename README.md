@@ -1,3 +1,7 @@
+# Warning
+
+## This package is deprecated. Please use the xrpl-accountlib package: https://www.npmjs.com/package/xrpl-accountlib
+
 # rippled-ws-client-sign
 
 #### Sign transactions locally and submit with `rippled-ws-client`
