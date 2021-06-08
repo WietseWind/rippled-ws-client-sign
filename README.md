@@ -1,6 +1,6 @@
 # Warning
-
-## This package is deprecated. Please use the xrpl-accountlib package: https://www.npmjs.com/package/xrpl-accountlib
+# This package is deprecated. Please use the xrpl-accountlib package: https://www.npmjs.com/package/xrpl-accountlib
+## See: https://github.com/WietseWind/XRPL-JS-TS-demo
 
 # rippled-ws-client-sign
 
